@@ -10,7 +10,7 @@ const spectrePol = partis.map(d => d.abbv);
 
 function onLoad () {
 	// RENDER THE MENY
-	const menu = d3.select('#filter-menu');	
+	const menu = d3.select('#menu');	
 	renderIcons(menu, 2);
 	renderIcons(menu, 3);
 

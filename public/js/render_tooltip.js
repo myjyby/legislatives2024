@@ -11,6 +11,11 @@ export function renderTooltip (kwargs) {
 	const padding = 25;
 	const colors = d3.scaleSequential(d3.interpolateSpectral);
 
+	const menu = d3.select('#menu');
+	menu.selectAll('.active').classed('active', false);
+	menu.selectAll('.comprendre').classed('active', true);
+	const section = menu.select('section.active');
+
 	let anchorX = 'c'
 	if (centroid[0] > w * 3/4) anchorX = 'r';
 	else if (centroid[0] < w * 1/4) anchorX = 'l';
@@ -26,12 +31,18 @@ export function renderTooltip (kwargs) {
 		.style('stroke', '#636363')
 		.style('stroke-width', 2);
 
-	const twidth = 400;
-	const theight = 300;
+	// const twidth = 400;
+	// const theight = 300;
 
-	const svg = sel.findAncestor('svg');
+	// const svg = sel.findAncestor('svg');
+
+	const svg = section.select('svg');
+	const { clientWidth, offsetWidth, clientHeight, offsetHeight } = svg.node();
+	const twidth = clientWidth || offsetWidth;
+	const theight = clientHeight || offsetHeight;
+
 	const toolitp = svg.addElems('g', 'tooltip')
-		.attr('transform', _ => {
+		/*.attr('transform', _ => {
 			if (anchor === 't-c') return `translate(${[centroid[0] - twidth / 2, posy - theight - padding]})`;
 			else if (anchor === 't-l') return `translate(${[Math.max(posx, padding), posy - theight - padding]})`;
 			else if (anchor === 't-r') return `translate(${[Math.min(posx + width - twidth, w - padding), posy - theight - padding]})`;
@@ -39,7 +50,7 @@ export function renderTooltip (kwargs) {
 			else if (anchor === 'b-c') return `translate(${[centroid[0] - twidth / 2, posy + height + padding]})`;
 			else if (anchor === 'b-l') return `translate(${[Math.max(posx, padding), posy + height + padding]})`;
 			else if (anchor === 'b-r') return `translate(${[Math.min(posx + width - twidth, w - padding), posy + height + padding]})`;
-		});
+		});*/
 
 	toolitp.addElems('rect', 'bg')
 		.attr('width', twidth)
@@ -59,8 +70,8 @@ export function renderTooltip (kwargs) {
 		})
 	
 	const x = d3.scalePoint(spectrePol, [padding, twidth - padding]);
-	const y = d3.scaleLinear([0, 50], [theight / 2 - padding, padding]);
-	// const y = d3.scaleLinear([0, Math.max(...circo.values.map(d => d.score))], [theight / 2 - padding, padding]);
+	const y = d3.scaleLinear([0, 50], [theight * 2/3, padding]);
+	// const y = d3.scaleLinear([0, Math.max(...circo.values.map(d => d.score))], [theight * 2/3 - padding, padding]);
 	
 	const orientations = nest.call(partis, { key: 'orientation' })
 	orientations.forEach(d => {
@@ -79,7 +90,7 @@ export function renderTooltip (kwargs) {
 
 	circo_partis.addElems('circle', 'parti', d => d.values)
 		.attr('cx', d => x(d.abbv))
-		.attr('cy', theight / 2)
+		.attr('cy', theight * 2/3)
 		.attr('r', 2)
 		.style('fill', d => {
 			if (circo.values.some(c => c.CodNuaCand === d.abbv)) return '#000';
@@ -91,7 +102,7 @@ export function renderTooltip (kwargs) {
 			else if (i === d.count - 1) return x(d.abbv) + 2;
 			else return x(d.abbv);
 		})
-		.attr('y', theight / 2)
+		.attr('y', theight * 2/3)
 		.attr('dy', (d, i) => {
 			return i % 2 === 0 ? '1.5em' : '3em'
 		})
@@ -110,8 +121,10 @@ export function renderTooltip (kwargs) {
 			else return 'normal';
 		}).text(d => d.abbv);
 
-	circo_partis.addElems('line', 'separateur')
-		.attr('x1', d => {
+	circo_partis.addElems('line', 'separateur', d => {
+		if (d.key !== orientations[orientations.length - 1].key) return [d]
+		else return []
+	}).attr('x1', d => {
 			const px = x(d.values[d.values.length - 1].abbv);
 			const dx = x(d.values[d.values.length - 1].abbv) - x(d.values[d.values.length - 2].abbv);
 			return px + dx / 2;
@@ -121,14 +134,14 @@ export function renderTooltip (kwargs) {
 			const dx = x(d.values[d.values.length - 1].abbv) - x(d.values[d.values.length - 2].abbv);
 			return px + dx / 2;
 		})
-		.attr('y1', theight / 2)
-		.attr('y2', theight * 2/3)
+		.attr('y1', theight * 2/3)
+		.attr('y2', theight - padding + 9)
 		.style('stroke', '#ACACAC')
 		.style('stroke-dasharray', '1px 3px');
 
 	circo_partis.addElems('text', 'orientation')
 		.attr('x', d => d3.mean(d.values, c => x(c.abbv)))
-		.attr('y', theight * 2/3)
+		.attr('y', theight - padding + 9)
 		.style('text-anchor', 'middle')
 		.style('font-size', '9px')
 		.text(d => {
@@ -152,7 +165,7 @@ export function renderTooltip (kwargs) {
 		.attr('x1', d => x(d.CodNuaCand))
 		.attr('x2', d => x(d.CodNuaCand))
 		.attr('y1', d => y(d.score))
-		.attr('y2', theight / 2)
+		.attr('y2', theight * 2/3)
 		.style('stroke', '#ACACAC')
 		.style('stroke-dasharray', '1px 3px');
 
@@ -188,5 +201,29 @@ export function renderTooltip (kwargs) {
 		.style('font-size', '9px')
 		.text(d => `${d.score}%`);
 
-	
+	console.log(circo)
+
+	section.select('ul').addElems('li', 'candidat', d => {
+		return spectrePol.map(d => {
+			const candidats = circo.values.filter(c => c.CodNuaCand === d);
+			if (candidats.length) return candidats.map(c => {
+				const obj = {}
+				obj.CodNuaCand = d;
+				obj.candidat = true;
+				obj.CivilitePsn = c.CivilitePsn;
+				obj.NomPsn = c.NomPsn;
+				obj.score = c.score;
+				obj.Elu = c.Elu;
+				return obj
+			});
+			else return [ { CodNuaCand: d, candidat: false, Elu: 'NON' } ]
+		}).flat();
+
+		return circo.values
+	}).classed('sans-candidat', d => !d.candidat)
+		.classed('elu', d => d.Elu !== 'NON')
+		.html(d => {
+			if (d.candidat) return `${d.CodNuaCand} - ${d.CivilitePsn} ${d.NomPsn} - ${d.score}%`;
+			else return `${d.CodNuaCand}`;
+		});
 }

@@ -39,7 +39,7 @@ export function renderIcons (menu, numPoints = 2) {
 }
 
 export function getFilters () {
-	const form = d3.select('#filter-menu section.active form').node();
+	const form = d3.select('#menu section.filtrer form').node();
 	const data = new FormData(form)
 	const apply = [];
 

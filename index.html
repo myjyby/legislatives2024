@@ -6,7 +6,7 @@
 	<script type='module' src='public/js/render_menu.js'></script>
 
 	<link rel='stylesheet' type='text/css' href='public/css/main.css'>
-	<link rel='stylesheet' type='text/css' href='public/css/filter_menu.css'>
+	<link rel='stylesheet' type='text/css' href='public/css/menu.css'>
 </head>
 
 <body>
@@ -22,15 +22,19 @@
 		<section>
 		</section>
 	</div>
-	<div id='filter-menu'>
+	<div id='menu'>
 		<nav>
 			<ul>
-				<li>Comprendre</li>
-				<li class='ouvert'>Filtrer</li>
-				<li>Scénariser</li>
+				<li class='comprendre'>Comprendre</li>
+				<li class='filtrer active'>Filtrer</li>
+				<li class='scenariser'>Scénariser</li>
 			</ul>
 		</nav>
-		<section class='active'>
+		<section class='comprendre'>
+			<svg width=400 height=200></svg>
+			<ul class='bullets'></ul>
+		</section>
+		<section class='filtrer active'>
 			<form>
 				<ul class='c-0'>
 					<!-- Elus -->
@@ -43,7 +47,7 @@
 					</li>
 					<li class='centre'>
 						<input type='checkbox' id='f-elu-c' name='elu' value='e-c' checked>
-						<label for='f-c'>Candidat.e du gauche</label>
+						<label for='f-c'>Candidat.e du centre</label>
 					</li>
 					<li class='droite'>
 						<input type='checkbox' id='f-elu-d' name='elu' value='e-d' checked>
