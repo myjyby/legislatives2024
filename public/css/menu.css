@@ -1,0 +1,79 @@
+#menu {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  /*	max-width: 30%;*/
+  border: 1px solid #C0C0C0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #FFF;
+  padding: 10px 15px;
+}
+#menu nav {
+  width: calc(100% + 30px);
+  margin-top: -10px;
+  margin-left: -15px;
+  border-bottom: 1px solid #C0C0C0;
+  margin-bottom: 10px;
+}
+#menu nav ul {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ECECEC;
+}
+#menu nav ul li {
+  position: relative;
+  display: inline;
+  padding: 15px 15px 10px 15px;
+}
+#menu nav ul li:not(:last-child) {
+  border-right: 1px solid #C0C0C0;
+}
+#menu nav ul li.active {
+  font-weight: bold;
+  background-color: #FFF;
+}
+#menu nav ul li.active::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  border-bottom: 1px solid #FFF;
+  width: 100%;
+  height: 0;
+}
+#menu section {
+  margin-top: 15px;
+}
+#menu section ul {
+  margin-bottom: 15px;
+}
+#menu section ul li:not(.title) {
+  margin-left: 15px;
+}
+#menu section ul li svg {
+  margin-right: 15px;
+}
+#menu section ul li label {
+  font-size: 0.75em;
+}
+#menu section ul.bullets {
+  margin-top: 15px;
+}
+#menu section ul.bullets li {
+  list-style: disc outside;
+  font-size: 0.75em;
+}
+#menu section ul.bullets li.sans-candidat {
+  color: #ACACAC;
+}
+#menu section ul.bullets li.elu {
+  font-weight: bold;
+}
+#menu section:not(.active) {
+  display: none;
+}
+
+/*# sourceMappingURL=menu.css.map */
