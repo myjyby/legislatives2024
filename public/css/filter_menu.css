@@ -1,0 +1,63 @@
+#filter-menu {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  max-width: 30%;
+  border: 1px solid #C0C0C0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #FFF;
+  padding: 10px 15px;
+}
+#filter-menu nav {
+  width: calc(100% + 30px);
+  margin-top: -10px;
+  margin-left: -15px;
+  border-bottom: 1px solid #C0C0C0;
+  margin-bottom: 10px;
+}
+#filter-menu nav ul {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ECECEC;
+}
+#filter-menu nav ul li {
+  position: relative;
+  display: inline;
+  padding: 15px 15px 10px 15px;
+}
+#filter-menu nav ul li:not(:last-child) {
+  border-right: 1px solid #C0C0C0;
+}
+#filter-menu nav ul li.ouvert {
+  font-weight: bold;
+  background-color: #FFF;
+}
+#filter-menu nav ul li.ouvert::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  border-bottom: 1px solid #FFF;
+  width: 100%;
+  height: 0;
+}
+#filter-menu section {
+  margin-top: 15px;
+}
+#filter-menu section ul {
+  margin-bottom: 15px;
+}
+#filter-menu section ul li:not(.title) {
+  margin-left: 15px;
+}
+#filter-menu section ul li svg {
+  margin-right: 15px;
+}
+#filter-menu section ul li label {
+  font-size: 0.75em;
+}
+
+/*# sourceMappingURL=filter_menu.css.map */

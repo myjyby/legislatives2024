@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='UTF-8'>
+	<script type='module' src='public/js/load.js'></script>
+	<script type='module' src='public/js/render_menu.js'></script>
+
+	<link rel='stylesheet' type='text/css' href='public/css/main.css'>
+	<link rel='stylesheet' type='text/css' href='public/css/filter_menu.css'>
+</head>
+
+<body>
+	<div id='canvas'>
+		<nav>
+			<ul class='territoires'>
+				<li class='title'>Contempler</li>
+				<li class='metropole'><button class='active'>Métropole</button></li>
+				<li class='droms'><button>DROMs</button></li>
+				<li class='villes'><button>Grandes villes</button></li>
+			</ul>
+		</nav>
+		<section>
+		</section>
+	</div>
+	<div id='filter-menu'>
+		<nav>
+			<ul>
+				<li>Comprendre</li>
+				<li class='ouvert'>Filtrer</li>
+				<li>Scénariser</li>
+			</ul>
+		</nav>
+		<section class='active'>
+			<form>
+				<ul class='c-0'>
+					<!-- Elus -->
+					<li class='title'>
+						Elu.e.s au premier tour:
+					</li>
+					<li class='gauche'>
+						<input type='checkbox' id='f-elu-g' name='elu' value='e-g' checked>
+						<label for='f-elu-g'>Candidat.e de gauche</label>
+					</li>
+					<li class='centre'>
+						<input type='checkbox' id='f-elu-c' name='elu' value='e-c' checked>
+						<label for='f-c'>Candidat.e du gauche</label>
+					</li>
+					<li class='droite'>
+						<input type='checkbox' id='f-elu-d' name='elu' value='e-d' checked>
+						<label for='f-elu-d'>Candidat.e de droite</label>
+					</li>
+				</ul>
+				<ul class='c-1'>
+					<!-- Ballotage -->
+					<li class='title'>
+						Ballotages:
+					</li>
+					<li class='gauche'>
+						<input type='checkbox' id='f-ballotage-g' name='ballotage' value='b-g' checked>
+						<label for='f-ballotage-g'>Où la gauche est présente</label>
+					</li>
+					<li class='centre'>
+						<input type='checkbox' id='f-ballotage-c' name='ballotage' value='b-c' checked>
+						<label for='f-ballotage-c'>Où le centre est présente</label>
+					</li>
+					<li class='droite'>
+						<input type='checkbox' id='f-ballotage-d' name='ballotage' value='b-d' checked>
+						<label for='f-ballotage-d'>Où la droite est présente</label>
+					</li>
+				</ul>
+				<ul class='c-2'>
+					<!-- Duels -->
+					<li class='title'>
+						Duels:
+					</li>
+					<li class='gauche'>
+						<input type='checkbox' id='f-duel-g' name='duel' value='d-g' checked>
+						<label for='f-duel-g'>Où le parti le plus à gauche est devant</label>
+					</li>
+					<li class='droite'>
+						<input type='checkbox' id='f-duel-d' name='duel' value='d-d' checked>
+						<label for='f-duel-d'>Où le parti le plus à droite est devant</label>
+					</li>
+				</ul>
+				<ul class='c-3'>
+					<!-- Triangulaires -->
+					<li class='title'>
+						Triangulaires:
+					</li>
+					<li class='gauche'>
+						<input type='checkbox' id='f-triangulaire-g' name='triangulaire' value='t-g' checked>
+						<label for='f-triangulaire-g'>Où le parti le plus à gauche est devant</label>
+					</li>
+					<li class='centre'>
+						<input type='checkbox' id='f-triangulaire-c' name='triangulaire' value='t-c' checked>
+						<label for='f-triangulaire-c'>Où le parti le plus proche du centre est devant</label>
+					</li>
+					<li class='droite'>
+						<input type='checkbox' id='f-triangulaire-d' name='triangulaire' value='t-d' checked>
+						<label for='f-triangulaire-d'>Où le parti le plus à droite est devant</label>
+					</li>
+				</ul>
+			</form>
+		</section>
+	</div>
+</body>
+</html>
