@@ -22,13 +22,13 @@ export function clearMap () {
 }
 
 export function drawMap (kwargs) {
-	const { w, h, geodata, circos, id } = kwargs;
-	const padding = 50;
+	const { w, h, geodata, circos, id, title } = kwargs;
+	const padding = 25;
 	// REF: https://observablehq.com/@ericmauviere/le-fond-de-carte-simplifie-des-communes-2021-avec-droms-rapp
 	const proj = d3.geoConicConformal()
 		.parallels([33, 45])
 		.rotate([0, 0])
-		.fitExtent([[0, 0],[w, h - padding]], geodata);
+		.fitExtent([[padding, padding],[w - padding, h - padding * 2]], geodata);
 
 	const path = d3.geoPath(proj);
 
@@ -37,6 +37,15 @@ export function drawMap (kwargs) {
 		.attr('viewBox', [0, 0, w, h])
 		.style('max-width', w)
 		.style('max-height', h);
+
+	if (title) {
+		svg.addElem('text', 'title')
+			.attr('x', w / 2)
+			.attr('y', h - padding)
+			.style('text-anchor', 'middle')
+			.style('font-size', '12px')
+			.text(title);
+	}
 
 	svg.addElems('g', 'fond-de-carte')
 	.addElems('path', 'circo', geodata.features)

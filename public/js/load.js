@@ -93,13 +93,13 @@ function onLoad () {
 			else if (sel.classed('droms')) {
 				const data = droms.map((c, id) => {
 					const { geodata, circos } = processData({ features: geo.features.filter(b => b.properties.nom_dpt.toLowerCase() === c.nom.toLowerCase()), votes })
-					return { geodata, circos, id: `dorm-${id}` };
+					return { geodata, circos, id: `drom-${id}`, title: c.nom };
 				});
 				sel.datum(data);
 			} else if (sel.classed('villes')) {
 				const data = villes.map((c, id) => {
 					const { geodata, circos } = processData({ features: geo.features.filter(b => c.dpts.includes(b.properties.code_dpt)), votes })
-					return { geodata, circos, id: `dorm-${id}` };
+					return { geodata, circos, id: `drom-${id}`, title: c.nom };
 				});
 				sel.datum(data);
 			}
@@ -110,10 +110,10 @@ function onLoad () {
 			if (sel.classed('active')) {
 				const data = d3.select(this.parentNode).datum();
 				data.forEach(d => {
-					const { geodata, circos, id } = d;
+					const { geodata, circos, id, title } = d;
 					const svgw = data.length === 1 ? w : w/3;
 					const svgh = data.length === 1 ? h : h/3;
-					drawMap({ w: svgw, h: svgh, geodata, circos, id });
+					drawMap({ w: svgw, h: svgh, geodata, circos, id, title });
 					drawResults();
 				});
 			}
@@ -124,10 +124,10 @@ function onLoad () {
 			sel.classed('active', true);
 			const data = d3.select(this.parentNode).datum();
 			data.forEach(d => {
-				const { geodata, circos, id } = d;
+				const { geodata, circos, id, title } = d;
 				const svgw = data.length === 1 ? w : w/3;
 				const svgh = data.length === 1 ? h : h/3;
-				drawMap({ w: svgw, h: svgh, geodata, circos, id });
+				drawMap({ w: svgw, h: svgh, geodata, circos, id, title });
 				drawResults();
 			});
 		});

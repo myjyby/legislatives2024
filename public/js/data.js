@@ -13,14 +13,15 @@ export const droms = [
 	{ dpt: 988, nom: 'Nouvelle-Caledonie' }
 ];
 export const villes = [
-	{ dpts: [75, 92, 93, 94], nom: 'Paris et petite couronne' },
+	{ dpts: [75], nom: 'Paris' },
+	{ dpts: [92, 93, 94], nom: 'Petite couronne' },
 	{ dpts: [77, 78, 91, 95], nom: 'Grande couronne' },
-	{ dpts: [13], nom: 'Marseille' },
-	{ dpts: [69], nom: 'Lyon' },
-	{ dpts: [31], nom: 'Toulouse' },
-	{ dpts: [59], nom: 'Lille' },
-	{ dpts: [33], nom: 'Bordeaux' },
-	{ dpts: [44], nom: 'Nantes' }
+	{ dpts: [13], nom: 'Bouches-du-Rhône (Marseille)' },
+	{ dpts: [69], nom: 'Rhône (Lyon)' },
+	{ dpts: [31], nom: 'Haute-Garonne (Toulouse)' },
+	{ dpts: [59], nom: 'Nord (Lille)' },
+	{ dpts: [33], nom: 'Gironde (Bordeaux)' },
+	{ dpts: [44], nom: 'Loire-Atlantique (Nantes)' }
 ];
 
 
