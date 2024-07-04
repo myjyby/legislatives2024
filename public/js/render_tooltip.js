@@ -11,17 +11,12 @@ export function renderTooltip (kwargs) {
 	const padding = 25;
 	const colors = d3.scaleSequential(d3.interpolateSpectral);
 
-	const menu = d3.select('#menu');
-	menu.selectAll('.active').classed('active', false);
-	menu.selectAll('.comprendre').classed('active', true);
-	const section = menu.select('section.active');
-
-	let anchorX = 'c'
-	if (centroid[0] > w * 3/4) anchorX = 'r';
-	else if (centroid[0] < w * 1/4) anchorX = 'l';
-	let anchorY = 't'
-	if (centroid[1] < h / 2) anchorY = 'b'
-	const anchor = `${anchorY}-${anchorX}`;
+	// let anchorX = 'c'
+	// if (centroid[0] > w * 3/4) anchorX = 'r';
+	// else if (centroid[0] < w * 1/4) anchorX = 'l';
+	// let anchorY = 't'
+	// if (centroid[1] < h / 2) anchorY = 'b'
+	// const anchor = `${anchorY}-${anchorX}`;
 
 	d3.selectAll('path.circo')
 		.style('stroke', '#CACACA')
@@ -35,6 +30,14 @@ export function renderTooltip (kwargs) {
 	// const theight = 300;
 
 	// const svg = sel.findAncestor('svg');
+
+	const menu = d3.select('#menu');
+	
+	if (!menu.select('nav ul li.comprendre').classed('active')) return null
+
+	// menu.selectAll('.active').classed('active', false);
+	// menu.selectAll('.comprendre').classed('active', true);
+	const section = menu.select('section.active');
 
 	const svg = section.select('svg');
 	const { clientWidth, offsetWidth, clientHeight, offsetHeight } = svg.node();
@@ -201,14 +204,14 @@ export function renderTooltip (kwargs) {
 		.style('font-size', '9px')
 		.text(d => `${d.score}%`);
 
-	console.log(circo)
-
-	section.select('ul').addElems('li', 'candidat', d => {
-		return spectrePol.map(d => {
-			const candidats = circo.values.filter(c => c.CodNuaCand === d);
+	section.addElems('ul', 'bullets', orientations)
+		.attr('data-label', d => d.key)
+	.addElems('li', 'candidat', d => {
+		return d.values.map(d => {
+			const candidats = circo.values.filter(c => c.CodNuaCand === d.abbv);
 			if (candidats.length) return candidats.map(c => {
 				const obj = {}
-				obj.CodNuaCand = d;
+				obj.CodNuaCand = d.abbv;
 				obj.candidat = true;
 				obj.CivilitePsn = c.CivilitePsn;
 				obj.NomPsn = c.NomPsn;
@@ -216,7 +219,7 @@ export function renderTooltip (kwargs) {
 				obj.Elu = c.Elu;
 				return obj
 			});
-			else return [ { CodNuaCand: d, candidat: false, Elu: 'NON' } ]
+			else return [ { CodNuaCand: d.abbv, candidat: false, Elu: 'NON' } ]
 		}).flat();
 
 		return circo.values

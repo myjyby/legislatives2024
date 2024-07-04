@@ -27,6 +27,7 @@
   position: relative;
   display: inline;
   padding: 15px 15px 10px 15px;
+  cursor: pointer;
 }
 #menu nav ul li:not(:last-child) {
   border-right: 1px solid #C0C0C0;
@@ -47,6 +48,12 @@
 #menu section {
   margin-top: 15px;
 }
+#menu section select {
+  display: block;
+}
+#menu section svg {
+  margin-bottom: 15px;
+}
 #menu section ul {
   margin-bottom: 15px;
 }
@@ -60,7 +67,10 @@
   font-size: 0.75em;
 }
 #menu section ul.bullets {
-  margin-top: 15px;
+  position: relative;
+  margin: 5px 0 15px 0;
+  padding-top: 5px;
+  border-top: 1px dotted #ACACAC;
 }
 #menu section ul.bullets li {
   list-style: disc outside;
@@ -68,9 +78,18 @@
 }
 #menu section ul.bullets li.sans-candidat {
   color: #ACACAC;
+  font-size: 0.5em;
 }
 #menu section ul.bullets li.elu {
   font-weight: bold;
+}
+#menu section ul.bullets::before {
+  content: attr(data-label);
+  position: absolute;
+  display: block;
+  font-size: 9px;
+  top: -10px;
+  background-color: #FFF;
 }
 #menu section:not(.active) {
   display: none;

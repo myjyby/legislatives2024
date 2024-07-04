@@ -14,6 +14,13 @@ function onLoad () {
 	renderIcons(menu, 2);
 	renderIcons(menu, 3);
 
+	menu.selectAll('nav ul li')
+	.on('click', function () {
+		const { name } = this.dataset;
+		menu.selectAll('.active').classed('active', false);
+		menu.selectAll(`.${name}`).classed('active', true);
+	});
+
 	menu.selectAll('input')
 	.on('change', drawResults);
 
@@ -124,6 +131,12 @@ function onLoad () {
 				drawResults();
 			});
 		});
+
+		// AJOUTER LES CIRCOS AU MENU "COMPRENDRE"
+		// menu.select('section.comprendre select')
+		// .addElems('option', null, geo.features)
+		// .attr('value', d => d.properties.code_dpt)
+		// .html(d => d.properties.code_dpt)
 
 	}).catch(err => console.log(err));
 }
