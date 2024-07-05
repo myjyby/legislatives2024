@@ -157,8 +157,8 @@ export function drawResults () {
 
 function filterData (d, filters) {
 	const max = Math.max(...d.values.map(c => c.score));
-	const elus = d.values.filter(c => c.Elu !== 'NON' && c.maintenu).length;
-	const partis_maintenus = d.values.filter(c => c.Elu !== 'NON' && c.maintenu).map(c => c.CodNuaCand);
+	const elus = d.values.filter(c => c.Elu !== 'NON' && (c.maintenu || c.Elu === 'OUI')).length;
+	const partis_maintenus = d.values.filter(c => c.Elu !== 'NON' && (c.maintenu || c.Elu === 'OUI')).map(c => c.CodNuaCand);
 
 	if (!filters.includes('e-g') && elus === 1 && gauche.some(c => partis_maintenus.includes(c))) return [];
 	if (!filters.includes('e-c') && elus === 1 && centre.some(c => partis_maintenus.includes(c))) return [];
