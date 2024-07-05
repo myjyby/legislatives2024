@@ -11,7 +11,7 @@ export function renderIcons (menu, numPoints = 2) {
 	menu.selectAll(`ul.c-${numPoints} li:not(.title)`)
 	.each(function () {
 		const sel = d3.select(this);
-		const svg = sel.insertElem('input', 'svg')
+		const svg = sel.insertElem('input', 'svg', 'icon')
 			.attr('width', iconSize[0])
 			.attr('height', iconSize[1]);
 		let g = svg.addElems('g', null, d => {

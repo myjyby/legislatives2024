@@ -176,13 +176,35 @@ export function renderTooltip (kwargs) {
 	.attr('d', d => {
 			return `M${d.values.map(c => `${x(c.CodNuaCand)},${y(c.score)}`).join(' L')}`;
 		}).style('stroke', '#000')
+		.style('stroke-dasharray', '1, 3')
 		.style('fill', 'none');
 
-	circo_elus.addElems('circle', 'parti', d => d.values)
+	circo_elus.addElems('path', 'balance-maintenu')
+	.attr('d', d => {
+			return `M${d.values.filter(c => c.maintenu === true).map(c => `${x(c.CodNuaCand)},${y(c.score)}`).join(' L')}`;
+		}).style('stroke', '#000')
+		.style('fill', 'none');
+
+	circo_elus.addElems('circle', 'parti', d => d.values.filter(c => c.maintenu === true || ['OUI', 'NON'].includes(c.Elu)))
 		.attr('r', 2)
 		.attr('cx', d => x(d.CodNuaCand))
 		.attr('cy', d => y(d.score))
 		.style('fill', d => {
+			if (useColor) {
+				return colors(spectrePol.indexOf(d.CodNuaCand) / spectrePol.length);
+			} else {
+				return '#000';
+			}
+		});
+
+	circo_elus.addElems('g', 'parti-retire', d => d.values.filter(c => c.maintenu === false && !['OUI', 'NON'].includes(c.Elu)))
+		.attr('transform', d => `translate(${[ x(d.CodNuaCand), y(d.score) ]})`)
+	.addElems('line', null, [ { x1: -3, y1: -3, x2: 3, y2: 3 }, { x1: -3, y1: 3, x2: 3, y2: -3 } ])
+		.attr('x1', d => d.x1)
+		.attr('x2', d => d.x2)
+		.attr('y1', d => d.y1)
+		.attr('y2', d => d.y2)
+		.style('stroke', d => {
 			if (useColor) {
 				return colors(spectrePol.indexOf(d.CodNuaCand) / spectrePol.length);
 			} else {
@@ -217,16 +239,19 @@ export function renderTooltip (kwargs) {
 				obj.NomPsn = c.NomPsn;
 				obj.score = c.score;
 				obj.Elu = c.Elu;
+				obj.maintenu = c.maintenu
 				return obj
 			});
-			else return [ { CodNuaCand: d.abbv, candidat: false, Elu: 'NON' } ]
+			else return [ { CodNuaCand: d.abbv, candidat: false, Elu: 'NON', maintenu: false } ]
 		}).flat();
 
 		return circo.values
 	}).classed('sans-candidat', d => !d.candidat)
 		.classed('elu', d => d.Elu !== 'NON')
 		.html(d => {
-			if (d.candidat) return `${d.CodNuaCand} - ${d.CivilitePsn} ${d.NomPsn} - ${d.score}%`;
-			else return `${d.CodNuaCand}`;
+			if (d.candidat) {
+				if (['OUI', 'NON'].includes(d.Elu) || (d.Elu !== 'NON' && d.maintenu)) return `${d.CodNuaCand} - ${d.CivilitePsn} ${d.NomPsn} - ${d.score}%`;
+				else return `<s>${d.CodNuaCand} - ${d.CivilitePsn} ${d.NomPsn} - ${d.score}%</s> (désisté.e)`;
+			} else return `${d.CodNuaCand}`;
 		});
 }

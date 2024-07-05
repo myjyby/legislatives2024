@@ -71,6 +71,10 @@
 				}
 				svg {
 					margin-right: 15px;
+
+					&.icon {
+						margin-bottom: 0;
+					}
 				}
 				label {
 					font-size: .75em;
@@ -93,6 +97,12 @@
 					}
 					&.elu {
 						font-weight: bold;
+					}
+					&.desiste {
+						text-decoration: line-through;
+					}
+					&.candidat:not(.elu):not(.retire) {
+						font-size: .5em;
 					}
 				}
 

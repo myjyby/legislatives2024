@@ -118,9 +118,16 @@ export function drawResults () {
 	.attr('d', d => {
 			return `M${d.values.map(c => `${x(c.CodNuaCand)},${y(c.score)}`).join(' L')}`;
 		}).style('stroke', '#000')
+		.style('stroke-dasharray', '1, 3')
 		.style('fill', 'none');
 
-	circo_elus.addElems('circle', 'parti', d => filterData(d, filters)[0]?.values || [])
+	circo_elus.addElems('path', 'balance-maintenu', d => filterData(d, filters))
+	.attr('d', d => {
+			return `M${d.values.filter(c => c.maintenu == true).map(c => `${x(c.CodNuaCand)},${y(c.score)}`).join(' L')}`;
+		}).style('stroke', '#000')
+		.style('fill', 'none');
+
+	circo_elus.addElems('circle', 'parti', d => filterData(d, filters)[0]?.values.filter(c => c.maintenu === true || ['OUI', 'NON'].includes(c.Elu)) || [])
 		.attr('r', 2)
 		.attr('cx', d => x(d.CodNuaCand))
 		.attr('cy', d => y(d.score))
@@ -131,12 +138,27 @@ export function drawResults () {
 				return '#000';
 			}
 		})
+
+	circo_elus.addElems('g', 'parti-desiste', d => filterData(d, filters)[0]?.values.filter(c => c.maintenu === false && !['OUI', 'NON'].includes(c.Elu)) || [])
+		.attr('transform', d => `translate(${[ x(d.CodNuaCand), y(d.score) ]})`)
+	.addElems('line', null, [ { x1: -2.5, y1: -2.5, x2: 2.5, y2: 2.5 }, { x1: -2.5, y1: 2.5, x2: 2.5, y2: -2.5 } ])
+		.attr('x1', d => d.x1)
+		.attr('x2', d => d.x2)
+		.attr('y1', d => d.y1)
+		.attr('y2', d => d.y2)
+		.style('stroke', d => {
+			if (useColor) {
+				return colors(spectrePol.indexOf(d.CodNuaCand) / spectrePol.length);
+			} else {
+				return '#000';
+			}
+		});
 }
 
 function filterData (d, filters) {
 	const max = Math.max(...d.values.map(c => c.score));
-	const elus = d.values.filter(c => c.Elu !== 'NON').length;
-	const partis_maintenus = d.values.filter(c => c.Elu !== 'NON').map(c => c.CodNuaCand);
+	const elus = d.values.filter(c => c.Elu !== 'NON' && c.maintenu).length;
+	const partis_maintenus = d.values.filter(c => c.Elu !== 'NON' && c.maintenu).map(c => c.CodNuaCand);
 
 	if (!filters.includes('e-g') && elus === 1 && gauche.some(c => partis_maintenus.includes(c))) return [];
 	if (!filters.includes('e-c') && elus === 1 && centre.some(c => partis_maintenus.includes(c))) return [];

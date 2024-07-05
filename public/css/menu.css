@@ -63,6 +63,9 @@
 #menu section ul li svg {
   margin-right: 15px;
 }
+#menu section ul li svg.icon {
+  margin-bottom: 0;
+}
 #menu section ul li label {
   font-size: 0.75em;
 }
@@ -82,6 +85,12 @@
 }
 #menu section ul.bullets li.elu {
   font-weight: bold;
+}
+#menu section ul.bullets li.desiste {
+  text-decoration: line-through;
+}
+#menu section ul.bullets li.candidat:not(.elu):not(.retire) {
+  font-size: 0.5em;
 }
 #menu section ul.bullets::before {
   content: attr(data-label);

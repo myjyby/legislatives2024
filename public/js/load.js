@@ -28,16 +28,19 @@ function onLoad () {
 	const requests = []
 	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/efa8c2e6-b8f7-4594-ad01-10b46b06b56a').then(res => res.json()))
 	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/a04f8cae-c94d-4ade-804d-ec024ee554ac').then(res => res.text()))
+	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/f04605b8-4c02-4496-8a26-2bc02b17f739').then(res => res.text()))
 	
 	Promise.all(requests)
 	.then(data => {
-		let [ geo, votes ] = data;
+		let [ geo, votes, candidatsT2 ] = data;
 
 		votes = d3.csvParse(votes)
 			.filter(d => {
 				if (filtrerElus) return d.Elu !== 'NON';
 				else return true;
 			});
+
+		candidatsT2 = d3.dsvFormat(';').parse(candidatsT2);
 
 		// POUR VOIR LA LISTE DE PARTIS, SELON LES DONNEES DE VOTES
 		// console.log(unique.call(votes.map(d => { return { abbv: d.CodNuaCand, nom: d.LibNuaCand } }), { key: 'abbv' }));
@@ -62,12 +65,32 @@ function onLoad () {
 		const score = 'RapportInscrits'
 		// const score = 'RapportExprimes'
 
+		candidatsT2.forEach(d => {
+			d.CodCirElec = `${d['Code circonscription'].length === 3 ? '0' : ''}${d['Code circonscription']}`;
+		})
+
+		// VERIFIER SI TOUS LES CANDIDATS DU DEUXIEME TOUR SONT DANS LE LOT DU PREMIER TOUR
+		/*
+		console.log(candidatsT2.filter(d => {
+			return !votes.some(c => {
+				return c.CodCirElec === d.CodCirElec
+					&& (c.CodNuaCand === d['Code nuance'] || c.NomPsn === d['Nom du candidat'])
+					&& c.Elu !== 'NON';
+			});
+		}));*/
+
 		votes.forEach(d => {
 			d.NbVoix = +d.NbVoix;
 			d.Inscrits = +d.Inscrits;
 			d.score = parseFloat(d[score].replace(',', '.'));
 			d.Abstentions = +d.Abstentions;
+			d.maintenu = d.Elu !== 'NON' && candidatsT2.some(c => {
+				return c.CodCirElec === d.CodCirElec
+					&& (d.CodNuaCand === c['Code nuance'] || d.NomPsn === c['Nom du candidat']);
+			})
 		});
+
+		console.log(votes.filter(d => d.Elu !== 'NON' && d.maintenu === false))
 
 		const { clientWidth, offsetWidth, clientHeight, offsetHeight } = d3.select('#canvas').node()
 		const w = clientWidth || offsetWidth;
