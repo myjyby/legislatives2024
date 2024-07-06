@@ -59,16 +59,20 @@ export function drawMap (kwargs) {
 		const { join_code } = d.properties;
 		const circo = circos.find(c => c.key === join_code);
 		
-		d3.selectAll('path.circo')
-			.style('stroke', '#CACACA')
-			.style('stroke-width', 1);
+		const filters = getFilters();
+		if (filterData(circo, filters).length) {
 
-		sel.moveToFront()
-			.style('stroke', '#636363')
-			.style('stroke-width', 2);
+			d3.selectAll('path.circo')
+				.style('stroke', '#CACACA')
+				.style('stroke-width', 1);
 
-		// renderTooltip.call(this, { circo, w, h });
-		renderComprendre(circo);
+			sel.moveToFront()
+				.style('stroke', '#636363')
+				.style('stroke-width', 2);
+
+			// renderTooltip.call(this, { circo, w, h });
+			renderComprendre(circo);
+		}
 	}).on('mouseout', _ => {
 		d3.selectAll('path.circo')
 			.style('stroke', '#CACACA')
@@ -82,8 +86,8 @@ export function drawMap (kwargs) {
 		const { join_code } = d.properties;
 		const circo = circos.find(c => c.key === join_code);
 		// renderTooltip.call(this, { circo, w, h });
-
-		renderComprendre(circo);
+		const filters = getFilters();
+		if (filterData(circo, filters).length) renderComprendre(circo);
 	});
 
 	svg.addElems('g', 'circo-votes', circos)
@@ -219,6 +223,21 @@ function filterData (d, filters) {
 
 	if (!filters.includes('t-d') 
 		&& elus === 3
+		&& droite.includes(d.values.find(c => c.score === max)?.CodNuaCand)
+	) return [];
+
+	if (!filters.includes('q-g') 
+		&& elus === 4
+		&& gauche.includes(d.values.find(c => c.score === max)?.CodNuaCand)
+	) return [];
+
+	if (!filters.includes('q-c') 
+		&& elus === 4
+		&& centre.includes(d.values.find(c => c.score === max)?.CodNuaCand)
+	) return [];
+
+	if (!filters.includes('q-d') 
+		&& elus === 4
 		&& droite.includes(d.values.find(c => c.score === max)?.CodNuaCand)
 	) return [];
 	

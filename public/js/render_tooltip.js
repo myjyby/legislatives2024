@@ -45,8 +45,6 @@ export function renderComprendre (circo) {
 
 	if (!circo) circo = svg.datum();
 
-	console.log(circo)
-
 	const toolitp = svg.addElems('g', 'tooltip')
 		/*.attr('transform', _ => {
 			if (anchor === 't-c') return `translate(${[centroid[0] - twidth / 2, posy - theight - padding]})`;

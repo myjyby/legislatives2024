@@ -16,6 +16,7 @@ function onLoad () {
 	const menu = d3.select('#menu');	
 	renderIcons(menu, 2);
 	renderIcons(menu, 3);
+	renderIcons(menu, 4);
 
 	menu.selectAll('nav ul li')
 	.on('click', function () {
