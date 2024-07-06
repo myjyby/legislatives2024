@@ -67,5 +67,9 @@ a:hover {
   display: flex;
   flex-wrap: wrap;
 }
+#canvas section svg .circo-votes,
+#canvas section svg .circo-elus {
+  pointer-events: none;
+}
 
 /*# sourceMappingURL=main.css.map */

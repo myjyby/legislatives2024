@@ -1,5 +1,6 @@
 import { clearMap, drawMap, drawResults } from './render_points.js';
 import { renderIcons } from './render_menu.js';
+import { renderComprendre } from './render_tooltip.js';
 import { droms, villes } from './data.js';
 import { nest, unique } from './helpers.js';
 import { partis } from './partis.js';
@@ -7,6 +8,8 @@ import { d3 } from './d3.prototype.extensions.js';
 
 const filtrerElus = false;
 const spectrePol = partis.map(d => d.abbv);
+// const score = 'RapportInscrits';
+const score = 'RapportExprimes'
 
 function onLoad () {
 	// RENDER THE MENY
@@ -29,10 +32,11 @@ function onLoad () {
 	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/efa8c2e6-b8f7-4594-ad01-10b46b06b56a').then(res => res.json()))
 	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/a04f8cae-c94d-4ade-804d-ec024ee554ac').then(res => res.text()))
 	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/f04605b8-4c02-4496-8a26-2bc02b17f739').then(res => res.text()))
+	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/386fd5ac-e7f1-4e0f-8929-12d2c5391081').then(res => res.text()))
 	
 	Promise.all(requests)
 	.then(data => {
-		let [ geo, votes, candidatsT2 ] = data;
+		let [ geo, votes, candidatsT2, resNat ] = data;
 
 		votes = d3.csvParse(votes)
 			.filter(d => {
@@ -41,6 +45,28 @@ function onLoad () {
 			});
 
 		candidatsT2 = d3.dsvFormat(';').parse(candidatsT2);
+
+		resNat = d3.dsvFormat(';').parse(resNat);
+		resNat.forEach(d => {
+			d.clean = []
+			Object.keys(d).map(c => {
+				const keyarr = c.split(' ');
+				const key = +keyarr[keyarr.length - 1];
+				if (!isNaN(key)) {
+					if (!d.clean.some(b => b.key === key)) {
+						const obj = { key };
+						if (score === 'RapportInscrits') obj.score = parseFloat(d[`% Voix/inscrits ${key}`].replace('%', '').replace(',', '.'));
+						else if (score === 'RapportExprimes') obj.score = parseFloat(d[`% Voix/exprimés ${key}`].replace('%', '').replace(',', '.'));
+						obj.CodNuaCand = d[`Nuance candidat ${key}`];
+						obj.CodCirElec = d['Code localisation'];
+						d.clean.push(obj);
+					}
+					const entry = d.clean.find(b => b.key === key);
+					entry[c] = d[c];
+				}
+			});
+		});
+		console.log(resNat)
 
 		// POUR VOIR LA LISTE DE PARTIS, SELON LES DONNEES DE VOTES
 		// console.log(unique.call(votes.map(d => { return { abbv: d.CodNuaCand, nom: d.LibNuaCand } }), { key: 'abbv' }));
@@ -62,9 +88,6 @@ function onLoad () {
 			}
 		});
 		
-		const score = 'RapportInscrits'
-		// const score = 'RapportExprimes'
-
 		candidatsT2.forEach(d => {
 			d.CodCirElec = `${d['Code circonscription'].length === 3 ? '0' : ''}${d['Code circonscription']}`;
 		})
@@ -154,6 +177,16 @@ function onLoad () {
 				drawResults();
 			});
 		});
+
+		const comprendre = menu.select('section.comprendre');
+		console.log(resNat)
+		const resNatClean = resNat.map(d => { return { key: d['Code localisation'], values: d.clean } });
+		resNatClean.forEach(d => {
+			d.values.sort((a, b) => spectrePol.indexOf(a.CodNuaCand) - spectrePol.indexOf(b.CodNuaCand));
+		});
+		comprendre.select('svg').data(resNatClean);
+
+		renderComprendre();
 
 		// AJOUTER LES CIRCOS AU MENU "COMPRENDRE"
 		// menu.select('section.comprendre select')

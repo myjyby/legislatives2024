@@ -57,6 +57,10 @@
 #menu section ul {
   margin-bottom: 15px;
 }
+#menu section ul li {
+  display: block;
+  position: relative;
+}
 #menu section ul li:not(.title) {
   margin-left: 15px;
 }
@@ -68,6 +72,19 @@
 }
 #menu section ul li label {
   font-size: 0.75em;
+}
+#menu section ul li.candidat .bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform-origin: right;
+  width: 100%;
+  height: 100%;
+  background-color: #ECECEC;
+  z-index: -1;
+}
+#menu section ul li.candidat label {
+  font-size: 1em;
 }
 #menu section ul.bullets {
   position: relative;

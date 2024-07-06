@@ -6,11 +6,9 @@ import { d3 } from './d3.prototype.extensions.js';
 export function renderTooltip (kwargs) {
 	const { circo, w, h } = kwargs;
 	const sel = d3.select(this);
-	const { x: posx, y: posy, width, height } = this.getBBox();
-	const centroid = [ posx + width / 2, posy + height / 2 ];
-	const padding = 25;
-	const colors = d3.scaleSequential(d3.interpolateSpectral);
-
+	// const { x: posx, y: posy, width, height } = this.getBBox();
+	// const centroid = [ posx + width / 2, posy + height / 2 ];
+	
 	// let anchorX = 'c'
 	// if (centroid[0] > w * 3/4) anchorX = 'r';
 	// else if (centroid[0] < w * 1/4) anchorX = 'l';
@@ -18,18 +16,19 @@ export function renderTooltip (kwargs) {
 	// if (centroid[1] < h / 2) anchorY = 'b'
 	// const anchor = `${anchorY}-${anchorX}`;
 
-	d3.selectAll('path.circo')
-		.style('stroke', '#CACACA')
-		.style('stroke-width', 1);
-
-	sel.moveToFront()
-		.style('stroke', '#636363')
-		.style('stroke-width', 2);
+	
 
 	// const twidth = 400;
 	// const theight = 300;
 
 	// const svg = sel.findAncestor('svg');
+	// renderComprendre(circo);
+
+}
+
+export function renderComprendre (circo) {
+	const padding = 25;
+	const colors = d3.scaleSequential(d3.interpolateSpectral);
 
 	const menu = d3.select('#menu');
 	
@@ -43,6 +42,10 @@ export function renderTooltip (kwargs) {
 	const { clientWidth, offsetWidth, clientHeight, offsetHeight } = svg.node();
 	const twidth = clientWidth || offsetWidth;
 	const theight = clientHeight || offsetHeight;
+
+	if (!circo) circo = svg.datum();
+
+	console.log(circo)
 
 	const toolitp = svg.addElems('g', 'tooltip')
 		/*.attr('transform', _ => {
@@ -68,8 +71,9 @@ export function renderTooltip (kwargs) {
 		.style('font-weight', 'bold')
 		.style('font-size', '12px')
 		.html(d => {
-			const { nom_dpt, code_dpt, num_circ } = d.geoCirco.properties;
-			return `${nom_dpt} (${code_dpt}) <tspan style='font-weight: normal'>- ${num_circ}${num_circ === 1 ? 'ère' : 'e'} circonscription</tspan>`
+			const { nom_dpt, code_dpt, num_circ } = d.geoCirco?.properties || {};
+			if (nom_dpt) return `${nom_dpt} (${code_dpt}) <tspan style='font-weight: normal'>- ${num_circ}${num_circ === 1 ? 'ère' : 'e'} circonscription</tspan>`
+			else return null;
 		})
 	
 	const x = d3.scalePoint(spectrePol, [padding, twidth - padding]);
@@ -172,16 +176,18 @@ export function renderTooltip (kwargs) {
 		.style('stroke', '#ACACAC')
 		.style('stroke-dasharray', '1px 3px');
 
-	circo_elus.addElems('path', 'balance')
+	circo_elus.addElems('path', 'balance', d => d.key !== 'FE' ? [d] : [])
 	.attr('d', d => {
 			return `M${d.values.map(c => `${x(c.CodNuaCand)},${y(c.score)}`).join(' L')}`;
 		}).style('stroke', '#000')
 		.style('stroke-dasharray', '1, 3')
 		.style('fill', 'none');
 
-	circo_elus.addElems('path', 'balance-maintenu')
+	circo_elus.addElems('path', 'balance-maintenu', d => d.key !== 'FE' ? [d] : [])
 	.attr('d', d => {
-			return `M${d.values.filter(c => c.maintenu === true).map(c => `${x(c.CodNuaCand)},${y(c.score)}`).join(' L')}`;
+			const values = d.values.filter(c => c.maintenu === true).map(c => `${x(c.CodNuaCand)},${y(c.score)}`);
+			if (values.length) return `M${values.join(' L')}`;
+			else return null;
 		}).style('stroke', '#000')
 		.style('fill', 'none');
 
@@ -212,7 +218,7 @@ export function renderTooltip (kwargs) {
 			}
 		});
 
-	circo_elus.addElems('text', 'score', d => d.values)
+	circo_elus.addElems('text', 'score', d => d.key !== 'FE' ? d.values : d.values.filter(c => c.score > 5))
 		.attr('x', d => x(d.CodNuaCand))
 		.attr('y', d => y(d.score))
 		.attr('dy', '-1em')
@@ -226,13 +232,14 @@ export function renderTooltip (kwargs) {
 		.style('font-size', '9px')
 		.text(d => `${d.score}%`);
 
-	section.addElems('ul', 'bullets', orientations)
+	const li = section.addElems('ul', 'bullets', orientations)
 		.attr('data-label', d => d.key)
 	.addElems('li', 'candidat', d => {
 		return d.values.map(d => {
 			const candidats = circo.values.filter(c => c.CodNuaCand === d.abbv);
 			if (candidats.length) return candidats.map(c => {
 				const obj = {}
+				obj.CodCirElec = c.CodCirElec;
 				obj.CodNuaCand = d.abbv;
 				obj.candidat = true;
 				obj.CivilitePsn = c.CivilitePsn;
@@ -246,12 +253,19 @@ export function renderTooltip (kwargs) {
 		}).flat();
 
 		return circo.values
-	}).classed('sans-candidat', d => !d.candidat)
-		.classed('elu', d => d.Elu !== 'NON')
+	}).classed('sans-candidat', d => !d.candidat && d.CodCirElec !== 'FE')
+		.classed('elu', d => (d.Elu !== 'NON' && d.CodCirElec !== 'FE') || (d.CodCirElec === 'FE' && d.score > 5))
+		
+	li.addElems('div', 'bar')
+		.style('transform', d => `scaleX(${Math.min((d.score ?? 0) / 50, 1)})`);
+
+	li.addElems('label')
 		.html(d => {
-			if (d.candidat) {
+			if (d.candidat && d.CodCirElec !== 'FE') {
 				if (['OUI', 'NON'].includes(d.Elu) || (d.Elu !== 'NON' && d.maintenu)) return `${d.CodNuaCand} - ${d.CivilitePsn} ${d.NomPsn} - ${d.score}%`;
 				else return `<s>${d.CodNuaCand} - ${d.CivilitePsn} ${d.NomPsn} - ${d.score}%</s> (désisté.e)`;
+			} else if (d.CodCirElec === 'FE') {
+				return `${d.CodNuaCand} - ${d.score}%`;
 			} else return `${d.CodNuaCand}`;
 		});
 }

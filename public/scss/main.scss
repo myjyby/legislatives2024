@@ -69,5 +69,12 @@ a:hover {
   section {
     display: flex;
     flex-wrap: wrap;
+
+    svg {
+      .circo-votes,
+      .circo-elus {
+        pointer-events: none;
+      }
+    }
   }
 }

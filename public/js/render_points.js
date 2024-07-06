@@ -1,7 +1,7 @@
 import { d3 } from './d3.prototype.extensions.js';
 import { partis } from './partis.js';
 import { getFilters } from './render_menu.js';
-import { renderTooltip } from './render_tooltip.js';
+import { renderTooltip, renderComprendre } from './render_tooltip.js';
 import { centroid } from 'https://cdn.jsdelivr.net/npm/@turf/turf@7/+esm';
 
 export const useColor = false;
@@ -55,16 +55,35 @@ export function drawMap (kwargs) {
 		.style('stroke', '#CACACA')
 		.style('fill', 'transparent')
 	.on('mouseover', function (evt, d) {
+		const sel = d3.select(this);
 		const { join_code } = d.properties;
 		const circo = circos.find(c => c.key === join_code);
-		renderTooltip.call(this, { circo, w, h });
-	}).on('click', function (evt, d) {
+		
+		d3.selectAll('path.circo')
+			.style('stroke', '#CACACA')
+			.style('stroke-width', 1);
+
+		sel.moveToFront()
+			.style('stroke', '#636363')
+			.style('stroke-width', 2);
+
+		// renderTooltip.call(this, { circo, w, h });
+		renderComprendre(circo);
+	}).on('mouseout', _ => {
+		d3.selectAll('path.circo')
+			.style('stroke', '#CACACA')
+			.style('stroke-width', 1);
+		renderComprendre();
+	})
+	.on('click', function (evt, d) {
 		const menu = d3.select('#menu');
 		menu.selectAll('.active').classed('active', false);
 		menu.selectAll('.comprendre').classed('active', true);
 		const { join_code } = d.properties;
 		const circo = circos.find(c => c.key === join_code);
-		renderTooltip.call(this, { circo, w, h });
+		// renderTooltip.call(this, { circo, w, h });
+
+		renderComprendre(circo);
 	});
 
 	svg.addElems('g', 'circo-votes', circos)
@@ -123,7 +142,9 @@ export function drawResults () {
 
 	circo_elus.addElems('path', 'balance-maintenu', d => filterData(d, filters))
 	.attr('d', d => {
-			return `M${d.values.filter(c => c.maintenu == true).map(c => `${x(c.CodNuaCand)},${y(c.score)}`).join(' L')}`;
+			const values = d.values.filter(c => c.maintenu == true).map(c => `${x(c.CodNuaCand)},${y(c.score)}`);
+			if (values.length) return `M${values.join(' L')}`;
+			else return null;
 		}).style('stroke', '#000')
 		.style('fill', 'none');
 
