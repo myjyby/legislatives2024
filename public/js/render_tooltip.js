@@ -71,9 +71,12 @@ export function renderComprendre (circo) {
 		.style('font-weight', 'bold')
 		.style('font-size', '12px')
 		.html(d => {
-			const { nom_dpt, code_dpt, num_circ } = d.geoCirco?.properties || {};
-			if (nom_dpt) return `${nom_dpt} (${code_dpt}) <tspan style='font-weight: normal'>- ${num_circ}${num_circ === 1 ? 'ère' : 'e'} circonscription</tspan>`
-			else return null;
+			if (d.key === 'FE') return 'RÉSULTATS NATIONAUX';
+			else {
+				const { nom_dpt, code_dpt, num_circ } = d.geoCirco?.properties || {};
+				if (nom_dpt) return `${nom_dpt} (${code_dpt}) <tspan style='font-weight: normal'>- ${num_circ}${num_circ === 1 ? 'ère' : 'e'} circonscription</tspan>`
+				else return null;
+			}
 		})
 	
 	const x = d3.scalePoint(spectrePol, [padding, twidth - padding]);
