@@ -34,10 +34,11 @@ function onLoad () {
 	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/a04f8cae-c94d-4ade-804d-ec024ee554ac').then(res => res.text()))
 	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/f04605b8-4c02-4496-8a26-2bc02b17f739').then(res => res.text()))
 	requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/386fd5ac-e7f1-4e0f-8929-12d2c5391081').then(res => res.text()))
+	// requests.push(fetch('https://www.data.gouv.fr/fr/datasets/r/6813fb28-7ec0-42ff-a528-2bc3d82d7dcd').then(res => res.text()))
 	
 	Promise.all(requests)
 	.then(data => {
-		let [ geo, votes, candidatsT2, resNat ] = data;
+		let [ geo, votes, candidatsT2, resNat, bureaux ] = data;
 
 		votes = d3.csvParse(votes)
 			.filter(d => {
@@ -46,6 +47,8 @@ function onLoad () {
 			});
 
 		candidatsT2 = d3.dsvFormat(';').parse(candidatsT2);
+
+		// console.log(d3.dsvFormat(';').parse(bureaux))
 
 		resNat = d3.dsvFormat(';').parse(resNat);
 		resNat.forEach(d => {
@@ -198,13 +201,13 @@ function onLoad () {
 	}).catch(err => console.log(err));
 }
 
-function processData (kwargs) {
-	const { features, votes, nom_dpt } = kwargs;
+export function processData (kwargs) {
+	const { features, votes } = kwargs;
 
 	const geodata = { type: 'FeatureCollection', features };
 	const geocodes = features.map(d => d.properties.join_code);
 
-	let circos = nest.call(votes, { key: 'CodCirElec', keep: [ 'Inscrits', 'Abstentions' ] });
+	let circos = nest.call(votes ?? [], { key: 'CodCirElec', keep: [ 'Inscrits', 'Abstentions' ] });
 	circos.forEach(d => {
 		d.values.sort((a, b) => spectrePol.indexOf(a.CodNuaCand) - spectrePol.indexOf(b.CodNuaCand));
 		d.geoCirco = features.find(c => c.properties.join_code === d.key);

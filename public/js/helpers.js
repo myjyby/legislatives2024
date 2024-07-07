@@ -42,3 +42,11 @@ export function nest (kwargs = {}) {
   });
   return arr;
 };
+
+export function chunk (size) {
+  const groups = [];
+  for (let i = 0; i < this.length; i += size) {
+    groups.push(this.slice(i, i + size));
+  }
+  return groups;
+};
